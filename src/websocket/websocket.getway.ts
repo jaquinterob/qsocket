@@ -5,7 +5,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { log } from 'console';
 import { Socket, Server } from 'socket.io';
 
 interface Vote {
@@ -28,7 +27,6 @@ export class websocketGetway {
       )[0];
       voteSelected.vote = newVote.vote;
       client.broadcast.emit('votes', this.votes);
-      console.log('updated vote');
     } else {
       console.log(
         'el voto no se pudo registrar porque no coincide con el hash',
@@ -65,14 +63,6 @@ export class websocketGetway {
     );
   }
 
-  private _updateVote(newVote: Vote): void {
-    const voteSelected = this.votes.filter(
-      (vote) => vote.user === newVote.user && vote.hash === newVote.hash,
-    )[0];
-    voteSelected.vote = newVote.vote;
-    this._emitVotes(newVote);
-  }
-
   private _pushNewVote(newVote: Vote): void {
     this.votes.push(newVote);
     this._emitVotes(newVote);
@@ -85,5 +75,11 @@ export class websocketGetway {
   @SubscribeMessage('currentVotes')
   getVotes() {
     return this.votes;
+  }
+
+  @SubscribeMessage('resetVotes')
+  resetVotes() {
+    this.votes = [];
+    this.server.emit('votes', this.votes);
   }
 }

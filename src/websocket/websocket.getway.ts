@@ -79,7 +79,7 @@ export class websocketGetway {
 
   @SubscribeMessage('resetVotes')
   resetVotes() {
-    this.votes = [];
+    this.votes.forEach((vote) => (vote.vote = ''));
     this.server.emit('votes', this.votes);
   }
 }

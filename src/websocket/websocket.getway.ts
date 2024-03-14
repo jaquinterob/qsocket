@@ -65,10 +65,11 @@ export class websocketGetway {
 
   private _pushNewVote(newVote: Vote): void {
     this.votes.push(newVote);
-    this._emitVotes(newVote);
+    this._emitVotes();
   }
 
-  private _emitVotes(newVote: Vote): void {
+  private _emitVotes(): void {
+    
     this.server.emit('votes', this.votes);
   }
 
@@ -80,6 +81,15 @@ export class websocketGetway {
   @SubscribeMessage('resetVotes')
   resetVotes() {
     this.votes.forEach((vote) => (vote.vote = ''));
+    this.server.emit('votes', this.votes);
+  }
+
+  @SubscribeMessage('removeUser')
+  removeUser(@MessageBody() user: string) {
+    console.log(user);
+    this.votes = this.votes.filter((vote) => vote.user !== user);
+    console.log(this.votes);
+
     this.server.emit('votes', this.votes);
   }
 }

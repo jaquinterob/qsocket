@@ -52,7 +52,6 @@ export class websocketGetway
     const newVote = payload[0];
     const roomName = payload[1];
     const room = this.getRoom(roomName);
-
     if (this.existsUser(newVote, room.history)) {
       this.updateVote(room, newVote);
     } else {

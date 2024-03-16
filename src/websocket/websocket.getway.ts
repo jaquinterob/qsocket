@@ -26,7 +26,7 @@ export class websocketGetway
         (room) => room.name.toLowerCase() === roomName.toString().toLowerCase(),
       )
     ) {
-      this.rooms.push({ name: roomName as string, history: [] });
+      this.rooms.push({ name: roomName as string, history: [], show: false });
     }
     client.join(roomName);
     const room = this.getRoom(roomName as string);
@@ -51,6 +51,7 @@ export class websocketGetway
   handleMessage(@MessageBody() payload: any): void {
     const newVote = payload[0];
     const roomName = payload[1];
+    if (newVote.user === '') return;
     const room = this.getRoom(roomName);
     if (this.existsUser(newVote, room.history)) {
       this.updateVote(room, newVote);
@@ -58,6 +59,24 @@ export class websocketGetway
       room.history.push(newVote);
       this.server.to(roomName).emit('votes', newVote);
     }
+  }
+
+  @SubscribeMessage('logOut')
+  logOut(@MessageBody() payload: any): void {
+    const user = payload[0];
+    const roomName = payload[1];
+    const room = this.getRoom(roomName);
+    room.history = room.history.filter((vote) => vote.user !== user);
+    this.server.to(roomName).emit('votes', room.history);
+  }
+
+  @SubscribeMessage('setShow')
+  showVotes(@MessageBody() payload: any): void {
+    const roomName = payload[0];
+    const show = payload[1];
+    const room = this.getRoom(roomName);
+    room.show = show;
+    this.server.to(roomName).emit('show', room.show);
   }
 
   private updateVote(room: Room, newVote: Vote): void {

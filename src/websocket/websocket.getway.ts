@@ -31,6 +31,7 @@ export class websocketGetway
     client.join(roomName);
     const room = this.getRoom(roomName as string);
     client.emit('roomHistory', room.history);
+    client.emit('show', room.show);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -67,7 +68,7 @@ export class websocketGetway
     const roomName = payload[1];
     const room = this.getRoom(roomName);
     room.history = room.history.filter((vote) => vote.user !== user);
-    this.server.to(roomName).emit('votes', room.history);
+    this.server.to(roomName).emit('roomHistory', room.history);
   }
 
   @SubscribeMessage('setShow')
@@ -83,6 +84,11 @@ export class websocketGetway
   resetVotes(@MessageBody() roomName: string): void {
     const room = this.getRoom(roomName);
     this.resetAllVotes(room);
+  }
+
+  @SubscribeMessage('resetValue')
+  resetValue(@MessageBody() roomName: string): void {
+    this.server.to(roomName).emit('value');
   }
 
   private resetAllVotes(room: Room) {

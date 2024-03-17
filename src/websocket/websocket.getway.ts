@@ -79,6 +79,20 @@ export class websocketGetway
     this.server.to(roomName).emit('show', room.show);
   }
 
+  @SubscribeMessage('resetVotes')
+  resetVotes(@MessageBody() roomName: string): void {
+    const room = this.getRoom(roomName);
+    console.log(roomName);
+    this.resetAllVotes(room);
+  }
+
+  private resetAllVotes(room: Room) {
+    console.log(room.history);
+    room.history.forEach((vote) => (vote.value = 0));
+    console.log(room.history);
+    this.server.to(room.name).emit('roomHistory', room.history);
+  }
+
   private updateVote(room: Room, newVote: Vote): void {
     const voteToUpdate = room.history.find(
       (vote) => vote.user.toLowerCase() === newVote.user.toLowerCase(),

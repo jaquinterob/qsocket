@@ -82,14 +82,11 @@ export class websocketGetway
   @SubscribeMessage('resetVotes')
   resetVotes(@MessageBody() roomName: string): void {
     const room = this.getRoom(roomName);
-    console.log(roomName);
     this.resetAllVotes(room);
   }
 
   private resetAllVotes(room: Room) {
-    console.log(room.history);
     room.history.forEach((vote) => (vote.value = 0));
-    console.log(room.history);
     this.server.to(room.name).emit('roomHistory', room.history);
   }
 

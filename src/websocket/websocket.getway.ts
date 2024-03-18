@@ -30,7 +30,10 @@ export class websocketGetway
     }
     client.join(roomName);
     const room = this.getRoom(roomName as string);
-    client.emit('roomHistory', room.history);
+    client.emit(
+      'roomHistory',
+      room.history.sort((a, b) => b.value - a.value),
+    );
     client.emit('show', room.show);
   }
 
@@ -68,7 +71,10 @@ export class websocketGetway
     const roomName = payload[1];
     const room = this.getRoom(roomName);
     room.history = room.history.filter((vote) => vote.user !== user);
-    this.server.to(roomName).emit('roomHistory', room.history);
+    this.server.to(roomName).emit(
+      'roomHistory',
+      room.history.sort((a, b) => b.value - a.value),
+    );
   }
 
   @SubscribeMessage('setShow')
@@ -93,7 +99,10 @@ export class websocketGetway
 
   private resetAllVotes(room: Room) {
     room.history.forEach((vote) => (vote.value = 0));
-    this.server.to(room.name).emit('roomHistory', room.history);
+    this.server.to(room.name).emit(
+      'roomHistory',
+      room.history.sort((a, b) => b.value - a.value),
+    );
   }
 
   private updateVote(room: Room, newVote: Vote): void {
@@ -101,7 +110,10 @@ export class websocketGetway
       (vote) => vote.user.toLowerCase() === newVote.user.toLowerCase(),
     );
     voteToUpdate.value = newVote.value;
-    this.server.to(room.name).emit('roomHistory', room.history);
+    this.server.to(room.name).emit(
+      'roomHistory',
+      room.history.sort((a, b) => b.value - a.value),
+    );
   }
 
   private addUser(room: Room, newVote: Vote): void {

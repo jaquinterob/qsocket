@@ -30,10 +30,7 @@ export class websocketGetway
     }
     client.join(roomName);
     const room = this.getRoom(roomName as string);
-    client.emit(
-      'roomHistory',
-      room.history.sort((a, b) => b.value - a.value),
-    );
+    client.emit('roomHistory', room.history);
     client.emit('show', room.show);
   }
 
@@ -60,8 +57,7 @@ export class websocketGetway
     if (this.existsUser(newVote, room.history)) {
       this.updateVote(room, newVote);
     } else {
-      room.history.push(newVote);
-      this.server.to(roomName).emit('votes', newVote);
+      this.addNewVote(room, newVote);
     }
   }
 
@@ -71,10 +67,7 @@ export class websocketGetway
     const roomName = payload[1];
     const room = this.getRoom(roomName);
     room.history = room.history.filter((vote) => vote.user !== user);
-    this.server.to(roomName).emit(
-      'roomHistory',
-      room.history.sort((a, b) => b.value - a.value),
-    );
+    this.server.to(roomName).emit('roomHistory', room.history);
   }
 
   @SubscribeMessage('setShow')
@@ -84,6 +77,10 @@ export class websocketGetway
     const room = this.getRoom(roomName);
     room.show = show;
     this.server.to(roomName).emit('show', room.show);
+    this.server.to(roomName).emit(
+      'roomHistory',
+      room.history.sort((a, b) => b.value - a.value),
+    );
   }
 
   @SubscribeMessage('resetVotes')
@@ -99,10 +96,7 @@ export class websocketGetway
 
   private resetAllVotes(room: Room) {
     room.history.forEach((vote) => (vote.value = 0));
-    this.server.to(room.name).emit(
-      'roomHistory',
-      room.history.sort((a, b) => b.value - a.value),
-    );
+    this.server.to(room.name).emit('roomHistory', room.history);
   }
 
   private updateVote(room: Room, newVote: Vote): void {
@@ -110,13 +104,15 @@ export class websocketGetway
       (vote) => vote.user.toLowerCase() === newVote.user.toLowerCase(),
     );
     voteToUpdate.value = newVote.value;
-    this.server.to(room.name).emit(
-      'roomHistory',
-      room.history.sort((a, b) => b.value - a.value),
-    );
+    room.show
+      ? this.server.to(room.name).emit(
+          'roomHistory',
+          room.history.sort((a, b) => b.value - a.value),
+        )
+      : this.server.to(room.name).emit('roomHistory', room.history);
   }
 
-  private addUser(room: Room, newVote: Vote): void {
+  private addNewVote(room: Room, newVote: Vote): void {
     room.history.push(newVote);
     this.server.to(room.name).emit('votes', newVote);
   }

@@ -12,7 +12,7 @@ import { Room } from 'src/websocket/interfaces/room';
 import { Vote } from 'src/websocket/interfaces/vote';
 
 @WebSocketGateway({ cors: true })
-export class websocketGetway
+export class WebsocketGetway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   @WebSocketServer()

@@ -7,6 +7,11 @@ import { RoomDto } from './dto/room.dto';
 @Injectable()
 export class RoomService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
+
+  findAll(){
+    return this.roomModel.find()
+  }
+
   create(roomDto: RoomDto) {
     const newRoom = new this.roomModel(roomDto);
     return newRoom.save();

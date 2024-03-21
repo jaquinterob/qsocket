@@ -1,11 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { RoomDto } from './dto/room.dto';
-
 
 @Controller('room')
 export class RoomController {
   constructor(private readonly roomService: RoomService) {}
+
+  @Get()
+  findAll() {
+    return this.roomService.findAll();
+  }
 
   @Post()
   create(@Body() roomDto: RoomDto) {

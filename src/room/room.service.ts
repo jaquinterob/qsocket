@@ -9,7 +9,7 @@ export class RoomService {
   constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
 
   findAll(){
-    return this.roomModel.find()
+    return this.roomModel.find().sort({createdAt: -1});
   }
 
   create(roomDto: RoomDto) {

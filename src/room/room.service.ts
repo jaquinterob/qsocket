@@ -45,7 +45,7 @@ export class RoomService {
     if (!existingRoom) {
       throw new NotFoundException('Room not found');
     }
-    existingRoom.lastVotes = votes;
+    existingRoom.lastVotes = votes.sort((a, b) => b.value - a.value);
     return await existingRoom.save();
   }
 

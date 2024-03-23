@@ -8,6 +8,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { RoomService } from 'src/room/room.service';
 import { Room } from 'src/websocket/interfaces/room';
 import { Vote } from 'src/websocket/interfaces/vote';
 
@@ -15,6 +16,8 @@ import { Vote } from 'src/websocket/interfaces/vote';
 export class WebsocketGetway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private readonly roomService: RoomService) {}
+
   @WebSocketServer()
   server: Server;
   private rooms: Room[] = [];
@@ -26,12 +29,18 @@ export class WebsocketGetway
         (room) => room.name.toLowerCase() === roomName.toString().toLowerCase(),
       )
     ) {
-      this.rooms.push({ name: roomName as string, history: [], show: false });
+      this.rooms.push({
+        name: roomName as string,
+        history: [],
+        show: false,
+        showBy: '',
+      });
     }
     client.join(roomName);
     const room = this.getRoom(roomName as string);
     client.emit('roomHistory', room.history);
     client.emit('show', room.show);
+    client.emit('showBy', room.showBy);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -50,15 +59,17 @@ export class WebsocketGetway
 
   @SubscribeMessage('newVote')
   handleMessage(@MessageBody() payload: any): void {
-    const newVote = payload[0];
+    const newVote: Vote = payload[0];
     const roomName = payload[1];
     if (newVote.user === '') return;
     const room = this.getRoom(roomName);
+    this.server.to(roomName).emit('showBy', room.showBy);
     if (this.existsUser(newVote, room.history)) {
       this.updateVote(room, newVote);
     } else {
       this.addNewVote(room, newVote);
     }
+    this.roomService.addUserToRoom(newVote.user, room.name);
   }
 
   @SubscribeMessage('logOut')
@@ -71,11 +82,17 @@ export class WebsocketGetway
   }
 
   @SubscribeMessage('setShow')
-  showVotes(@MessageBody() payload: any): void {
+  async showVotes(@MessageBody() payload: any): Promise<void> {
     const roomName = payload[0];
     const show = payload[1];
+    const user = payload[2];
     const room = this.getRoom(roomName);
     room.show = show;
+    if (room.show) {
+      await this.roomService.setLastVotes(room.history, room.name);
+      await this.roomService.setShowBy(user, room.name);
+      this.server.to(roomName).emit('showBy', user);
+    }
     this.server.to(roomName).emit('show', room.show);
     this.server.to(roomName).emit(
       'roomHistory',

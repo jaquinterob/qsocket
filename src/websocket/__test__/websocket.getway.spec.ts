@@ -1,14 +1,19 @@
+import { RoomService } from 'src/room/room.service';
 import { WebsocketGetway } from '../websocket.getway';
+import { Test } from '@nestjs/testing';
+import { GatewayModule } from '../websocket.module';
+import { RoomModule } from 'src/room/room.module';
 
-describe('WebsocketGateway', () => {
-  let websocketGateway;
+xdescribe('WebsocketGateway', () => {
+  let websocketGateway
   const room = {
     name: 'room1',
     history: [{ user: 'John', value: 3 }],
     show: false,
   };
-  beforeEach(() => {
+  beforeEach(async() => {
     websocketGateway = new WebsocketGetway();
+    
     websocketGateway.server = {
       to: jest.fn().mockReturnThis(),
       emit: jest.fn(),

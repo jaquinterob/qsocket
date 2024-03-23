@@ -30,6 +30,7 @@ describe('RoomController', () => {
   it('', () => {
     const roomDto: RoomDto = {
       hash: '',
+      users:[]
     };
     controller.create(roomDto);
     expect(mocks.roomService.create).toHaveBeenCalled()

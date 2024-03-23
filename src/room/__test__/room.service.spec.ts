@@ -11,7 +11,7 @@ describe('RoomService', () => {
 
   const mocks = {
     roomModel: jest.fn(() => ({
-      find: jest.fn(), 
+      find: jest.fn(),
       create: jest.fn(),
       constructor: jest.fn(),
       save: jest.fn(),
@@ -43,6 +43,7 @@ describe('RoomService', () => {
   it('create() works', () => {
     const roomDto: RoomDto = {
       hash: '',
+      users: [],
     };
     service.create(roomDto);
   });

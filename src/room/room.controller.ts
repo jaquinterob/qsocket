@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Get,
-  Patch,
-  Param,
-  ParseUUIDPipe,
-} from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Param } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { RoomDto, UpdateRoomDto } from './dto/room.dto';
 
@@ -30,7 +22,10 @@ export class RoomController {
   }
 
   @Patch('addUserToRoom/:hash/:newUser')
-  addUserToRoom(@Param('hash') hash: string, @Param('newUser') newUser: string) {
+  addUserToRoom(
+    @Param('hash') hash: string,
+    @Param('newUser') newUser: string,
+  ) {
     return this.roomService.addUserToRoom(newUser, hash);
   }
 }

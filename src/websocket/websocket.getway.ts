@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -69,7 +70,11 @@ export class WebsocketGetway
     } else {
       this.addNewVote(room, newVote);
     }
-    this.roomService.addUserToRoom(newVote.user, room.name);
+    try {
+      this.roomService.addUserToRoom(newVote.user, room.name);
+    } catch (error) {
+      return;
+    }
   }
 
   @SubscribeMessage('logOut')

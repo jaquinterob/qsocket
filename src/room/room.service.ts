@@ -20,42 +20,38 @@ export class RoomService {
 
   async update(hash: string, roomDto: UpdateRoomDto): Promise<RoomDto> {
     const existingRoom = await this.roomModel.findOne({ hash });
-    if (!existingRoom) {
-      throw new NotFoundException('Room not found');
+    if (existingRoom) {
+      return this.roomModel.findOneAndUpdate({ hash }, roomDto, {
+        new: true,
+      });
     }
-    return this.roomModel.findOneAndUpdate({ hash }, roomDto, {
-      new: true,
-    });
   }
 
   async addUserToRoom(newUser: string, hash: string): Promise<RoomDto> {
     const existingRoom = await this.roomModel.findOne({ hash });
-    if (!existingRoom) {
-      throw new NotFoundException('Room not found');
+    if (existingRoom) {
+      const existUser = this.existUser(newUser, existingRoom.users);
+      if (!existUser) {
+        existingRoom.users = [...existingRoom.users, newUser];
+      }
+      return existingRoom.save();
     }
-    const existUser = this.existUser(newUser, existingRoom.users);
-    if (!existUser) {
-      existingRoom.users = [...existingRoom.users, newUser];
-    }
-    return existingRoom.save();
   }
 
   async setLastVotes(votes: Vote[], hash: string): Promise<RoomDto> {
     const existingRoom = await this.roomModel.findOne({ hash });
-    if (!existingRoom) {
-      throw new NotFoundException('Room not found');
+    if (existingRoom) {
+      existingRoom.lastVotes = votes.sort((a, b) => b.value - a.value);
+      return await existingRoom.save();
     }
-    existingRoom.lastVotes = votes.sort((a, b) => b.value - a.value);
-    return await existingRoom.save();
   }
 
-  async setShowBy(user:string,hash:string):Promise<RoomDto>{
+  async setShowBy(user: string, hash: string): Promise<RoomDto> {
     const existingRoom = await this.roomModel.findOne({ hash });
-    if (!existingRoom) {
-      throw new NotFoundException('Room not found');
+    if (existingRoom) {
+      existingRoom.showBy = user;
+      return await existingRoom.save();
     }
-    existingRoom.showBy = user;
-    return await existingRoom.save();
   }
 
   private existUser(newUser: string, users: string[]): boolean {

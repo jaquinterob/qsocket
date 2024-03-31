@@ -44,6 +44,8 @@ describe('RoomService', () => {
     const roomDto: RoomDto = {
       hash: '',
       users: [],
+      lastVotes:[],
+      showBy:''
     };
     service.create(roomDto);
   });

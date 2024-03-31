@@ -24,15 +24,17 @@ describe('RoomController', () => {
 
   it('findAll works', () => {
     controller.findAll();
-    expect(mocks.roomService.findAll).toHaveBeenCalled()
+    expect(mocks.roomService.findAll).toHaveBeenCalled();
   });
-  
+
   it('', () => {
     const roomDto: RoomDto = {
       hash: '',
-      users:[]
+      users: [],
+      lastVotes: [],
+      showBy: '',
     };
     controller.create(roomDto);
-    expect(mocks.roomService.create).toHaveBeenCalled()
+    expect(mocks.roomService.create).toHaveBeenCalled();
   });
 });

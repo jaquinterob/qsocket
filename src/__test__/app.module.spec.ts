@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../app.module';
 import { GatewayModule } from '../websocket/websocket.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { RoomModule } from '../room/room.module';
 
 describe('AppModule', () => {
@@ -9,7 +8,7 @@ describe('AppModule', () => {
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule,GatewayModule,RoomModule],
     }).compile();
   });
 

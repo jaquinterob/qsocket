@@ -9,8 +9,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { RoomService } from 'src/room/room.service';
-import { Room } from 'src/websocket/interfaces/room';
+import { RoomService } from '../room/room.service';
+import { Room } from '../websocket/interfaces/room';
 import { Vote } from 'src/websocket/interfaces/vote';
 
 @WebSocketGateway({ cors: true })

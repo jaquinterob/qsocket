@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 import { Vote } from 'src/websocket/interfaces/vote';
 
 @Schema({ versionKey: false })
-export class Room {
+export class Room extends Document {
   @Prop({ unique: true, required: true, trim: true })
   hash: string;
   @Prop({ required: true, default: [] })

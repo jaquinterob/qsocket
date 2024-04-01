@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,

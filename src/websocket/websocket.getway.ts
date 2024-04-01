@@ -50,17 +50,17 @@ export class WebsocketGetway
   }
 
   @SubscribeMessage('existsUser')
-  registerUser(@MessageBody() payload: any): boolean {
-    const newVote = payload[0];
-    const roomName = payload[1];
+  registerUser(@MessageBody() payload: any[]): boolean {
+    const newVote: Vote = payload[0];
+    const roomName: string = payload[1];
     const room = this.getRoom(roomName);
     return this.existsUser(newVote, room.history);
   }
 
   @SubscribeMessage('newVote')
-  handleMessage(@MessageBody() payload: any): void {
+  handleMessage(@MessageBody() payload: any[]): void {
     const newVote: Vote = payload[0];
-    const roomName = payload[1];
+    const roomName: string = payload[1];
     if (newVote.user === '') return;
     const room = this.getRoom(roomName);
     this.server.to(roomName).emit('showBy', room.showBy);

@@ -21,7 +21,6 @@ describe('AppModule', () => {
     expect(gatewayModule).toBeDefined();
   });
 
-
   it('should import RoomModule', () => {
     const roomModule = app.get(RoomModule);
     expect(roomModule).toBeDefined();

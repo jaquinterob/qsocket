@@ -38,20 +38,16 @@ pipeline {
         sh "docker build -t $IMAGE_NAME ."
       }
     }
-    
-    // stage('Install Dependencies') {
-    //   steps {
-    //     sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME "
-    //   }
-    // }
-    stage('Install Dependencies') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'MONGO_CONNECT', variable: 'MONGO_CONNECT')]) {
-                        sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME"
-                    }
-                }
-            }
+
+    stage('Launch the app in the docker container') {
+      steps {
+        script {
+          withCredentials([string(credentialsId: 'MONGO_CONNECT', variable: 'MONGO_CONNECT')]) {
+            sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME"
+           }
         }
+      }
+    }
   }
+
 }

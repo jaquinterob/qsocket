@@ -5,7 +5,6 @@ pipeline {
     PORT = '5001' 
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
-    MONGO_CONNECT_CREDENTIAL = credentials('MONGO_CONNECT')
   }
   
   stages {

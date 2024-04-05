@@ -10,7 +10,7 @@ import { RoomService } from './room/room.service';
     GatewayModule,
     MongooseModule.forRootAsync({
       useFactory: () => ({
-        uri: mongoUrl(),
+        uri: process.env.MONGO_CONNECT,
       }),
     }),
     RoomModule,

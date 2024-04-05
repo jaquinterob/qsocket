@@ -5,6 +5,7 @@ pipeline {
     PORT = '5001' 
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
+    MONGO_CONNECT = credentials('MONGO_CONNECT')
   }
   
   stages {
@@ -41,7 +42,7 @@ pipeline {
     
     stage('Install Dependencies') {
       steps {
-        sh "docker run -dp $PORT:3000 --name $APP_NAME $IMAGE_NAME"
+        sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME "
       }
     }
   }

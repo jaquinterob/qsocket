@@ -5,7 +5,7 @@ pipeline {
     PORT = '5001' 
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
-    MONGO_CONNECT = credentials('MONGO_CONNECT')
+    MONGO_CONNECT = 'mongodb://jaquinterob:matrimonio@mongo.jaquinterob.com:27777/qpocker?authSource=admin'
   }
   
   stages {

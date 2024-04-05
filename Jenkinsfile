@@ -6,6 +6,7 @@ pipeline {
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
     MONGO_CONNECT = 'mongodb://jaquinterob:matrimonio@mongo.jaquinterob.com:27777/qpocker?authSource=admin'
+    MONGO_CONNECT_CREDENTIAL = credentials('MONGO_CONNECT')
   }
   
   stages {
@@ -40,10 +41,19 @@ pipeline {
       }
     }
     
+    // stage('Install Dependencies') {
+    //   steps {
+    //     sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME "
+    //   }
+    // }
     stage('Install Dependencies') {
-      steps {
-        sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME "
-      }
-    }
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'MONGO_CONNECT', variable: 'MONGO_CONNECT')]) {
+                        sh "docker run -dp $PORT:3000 --name $APP_NAME -e MONGO_CONNECT=$MONGO_CONNECT $IMAGE_NAME"
+                    }
+                }
+            }
+        }
   }
 }

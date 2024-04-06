@@ -24,11 +24,10 @@ export class WebsocketGetway
 
   handleConnection(@ConnectedSocket() client: Socket) {
     const roomName = client.handshake.query.room || 'default';
-    if (
-      !this.rooms.some(
-        (room) => room.name.toLowerCase() === roomName.toString().toLowerCase(),
-      )
-    ) {
+    const existingRoom = this.rooms.some(
+      (room) => room.name.toLowerCase() === roomName.toString().toLowerCase(),
+    );
+    if (!existingRoom) {
       this.rooms.push({
         name: roomName as string,
         history: [],

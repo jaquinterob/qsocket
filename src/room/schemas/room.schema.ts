@@ -4,7 +4,7 @@ import { Vote } from 'src/websocket/interfaces/vote';
 
 @Schema({ versionKey: false })
 export class Room extends Document {
-  @Prop({ unique: true, required: true, trim: true })
+  @Prop({ unique: true, required: true, trim: true, index: true })
   hash: string;
   @Prop({ required: true, default: [] })
   users: string[];

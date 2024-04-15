@@ -1,6 +1,7 @@
 import { RoomDto } from '../dto/room.dto';
 import { Vote } from '../../websocket/interfaces/vote';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace RoomServiceMocks {
   export const roomDto: RoomDto = {
     hash: '',
@@ -22,6 +23,7 @@ export namespace RoomServiceMocks {
     }),
     findOne: jest.fn(() => ({
       save: jest.fn().mockResolvedValueOnce(roomDto),
+      catch: jest.fn().mockResolvedValueOnce(roomDto),
       users: [],
     })),
     findOneAndUpdate: jest.fn().mockResolvedValueOnce(roomDto),

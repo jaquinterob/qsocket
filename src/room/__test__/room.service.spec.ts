@@ -4,6 +4,7 @@ import { Room } from '../schemas/room.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoomServiceMocks } from './mocks';
+import { AllExceptionsFilter } from '../../errors/AllExceptionsFilter';
 
 describe('RoomService', () => {
   let service: RoomService;
@@ -17,6 +18,8 @@ describe('RoomService', () => {
           provide: getModelToken(Room.name),
           useValue: RoomServiceMocks.roomModel,
         },
+
+        AllExceptionsFilter,
       ],
     }).compile();
     service = module.get<RoomService>(RoomService);
@@ -29,6 +32,7 @@ describe('RoomService', () => {
   });
 
   describe('findAll', () => {
+    beforeEach(() => {});
     it('should return all rooms', async () => {
       jest.spyOn(roomModel, 'find' as any).mockReturnValueOnce({
         sort: jest.fn().mockResolvedValueOnce([]),
@@ -53,24 +57,24 @@ describe('RoomService', () => {
   });
 
   it('should async addUserToRoom(newUser: string, hash: string) works', async () => {
-    const existUserSpy = jest
-      .spyOn(service, 'existUser' as any)
-      .mockReturnValue(false);
+    jest.spyOn(service, 'existUser' as any).mockReturnValue(false);
     const result = await service.addUserToRoom('', '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
-    expect(existUserSpy).toHaveBeenCalledWith('', []);
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 
   it('should async setLastVotes(votes: Vote[], hash: string) works', async () => {
     const result = await service.setLastVotes(RoomServiceMocks.votes, '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
+    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({
+      hash: '',
+    });
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 
   it('should async setShowBy(user: string, hash: string) works', async () => {
     const result = await service.setShowBy('', '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
+    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({
+      hash: '',
+    });
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 

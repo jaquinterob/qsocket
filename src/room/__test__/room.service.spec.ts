@@ -4,6 +4,7 @@ import { Room } from '../schemas/room.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RoomServiceMocks } from './mocks';
+import { AllExceptionsFilter } from '../../errors/AllExceptionsFilter';
 
 describe('RoomService', () => {
   let service: RoomService;
@@ -17,6 +18,8 @@ describe('RoomService', () => {
           provide: getModelToken(Room.name),
           useValue: RoomServiceMocks.roomModel,
         },
+
+        AllExceptionsFilter,
       ],
     }).compile();
     service = module.get<RoomService>(RoomService);
@@ -29,6 +32,7 @@ describe('RoomService', () => {
   });
 
   describe('findAll', () => {
+    beforeEach(() => {});
     it('should return all rooms', async () => {
       jest.spyOn(roomModel, 'find' as any).mockReturnValueOnce({
         sort: jest.fn().mockResolvedValueOnce([]),

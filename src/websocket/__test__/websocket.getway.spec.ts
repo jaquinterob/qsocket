@@ -1,8 +1,6 @@
 import { RoomService } from '../../room/room.service';
 import { WebsocketGetway } from '../websocket.getway';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Room } from '../../websocket/interfaces/room';
-import { Vote } from '../interfaces/vote';
 import { Server } from 'socket.io';
 import { GatewayMock } from './mocks';
 

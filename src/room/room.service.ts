@@ -47,57 +47,57 @@ export class RoomService {
   }
 
   async addUserToRoom(newUser: string, hash: string): Promise<RoomDto> {
-    const existingRoom = await this.roomModel
-      .findOne({ hash })
-      .catch((error) => {
-        throw error;
-      });
-    if (existingRoom) {
-      const existUser = this.#existUser(newUser, existingRoom.users);
-      if (!existUser) {
-        existingRoom.users.push(newUser);
+    try {
+      const existingRoom = await this.roomModel.findOne({ hash });
+      if (existingRoom) {
+        const existUser = this.existUser(newUser, existingRoom.users);
+        if (!existUser) {
+          existingRoom.users.push(newUser);
+        }
+        return existingRoom.save().catch((error) => {
+          throw error;
+        });
+      } else {
+        throw new BadRequestException(`room with hash: ${hash} was not found`);
       }
-      return existingRoom.save().catch((error) => {
-        throw error;
-      });
-    } else {
-      throw new BadRequestException(`room with hash: ${hash} was not found`);
+    } catch (error) {
+      throw error;
     }
   }
 
   async setLastVotes(votes: Vote[], hash: string): Promise<RoomDto> {
-    const existingRoom = await this.roomModel
-      .findOne({ hash })
-      .catch((error) => {
-        throw error;
-      });
-    if (existingRoom) {
-      existingRoom.lastVotes = votes.sort((a, b) => b.value - a.value);
-      return await existingRoom.save().catch((error) => {
-        throw error;
-      });
-    } else {
-      throw new BadRequestException(`room with hash: ${hash} was not found`);
+    try {
+      const existingRoom = await this.roomModel.findOne({ hash });
+      if (existingRoom) {
+        existingRoom.lastVotes = votes.sort((a, b) => b.value - a.value);
+        return await existingRoom.save().catch((error) => {
+          throw error;
+        });
+      } else {
+        throw new BadRequestException(`room with hash: ${hash} was not found`);
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
   async setShowBy(user: string, hash: string): Promise<RoomDto> {
-    const existingRoom = await this.roomModel
-      .findOne({ hash })
-      .catch((error) => {
-        throw error;
-      });
-    if (existingRoom) {
-      existingRoom.showBy = user;
-      return await existingRoom.save().catch((error) => {
-        throw error;
-      });
-    } else {
-      throw new BadRequestException(`room with hash: ${hash} was not found`);
+    try {
+      const existingRoom = await this.roomModel.findOne({ hash });
+      if (existingRoom) {
+        existingRoom.showBy = user;
+        return await existingRoom.save().catch((error) => {
+          throw error;
+        });
+      } else {
+        throw new BadRequestException(`room with hash: ${hash} was not found`);
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
-  #existUser(newUser: string, users: string[]): boolean {
+  private existUser(newUser: string, users: string[]): boolean {
     return users.some(
       (user) =>
         user.trim().toLocaleLowerCase() === newUser.trim().toLocaleLowerCase(),

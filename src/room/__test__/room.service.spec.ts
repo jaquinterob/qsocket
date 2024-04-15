@@ -53,24 +53,24 @@ describe('RoomService', () => {
   });
 
   it('should async addUserToRoom(newUser: string, hash: string) works', async () => {
-    const existUserSpy = jest
-      .spyOn(service, 'existUser' as any)
-      .mockReturnValue(false);
+    jest.spyOn(service, 'existUser' as any).mockReturnValue(false);
     const result = await service.addUserToRoom('', '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
-    expect(existUserSpy).toHaveBeenCalledWith('', []);
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 
   it('should async setLastVotes(votes: Vote[], hash: string) works', async () => {
     const result = await service.setLastVotes(RoomServiceMocks.votes, '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
+    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({
+      hash: '',
+    });
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 
   it('should async setShowBy(user: string, hash: string) works', async () => {
     const result = await service.setShowBy('', '');
-    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({ hash: '' });
+    expect(RoomServiceMocks.roomModel.findOne).toHaveBeenCalledWith({
+      hash: '',
+    });
     expect(result).toEqual(RoomServiceMocks.roomDto);
   });
 

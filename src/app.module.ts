@@ -3,6 +3,8 @@ import { GatewayModule } from './websocket/websocket.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoomModule } from './room/room.module';
 import { MONGO_CONNECT_LOCAL } from './db/mongo';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './errors/AllExceptionsFilter';
 
 @Module({
   imports: [
@@ -15,6 +17,11 @@ import { MONGO_CONNECT_LOCAL } from './db/mongo';
     RoomModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}

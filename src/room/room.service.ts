@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Room } from './schemas/room.schema';
@@ -41,8 +41,6 @@ export class RoomService {
         .catch((error) => {
           throw error;
         });
-    } else {
-      throw new BadRequestException(`room with hash: ${hash} was not found`);
     }
   }
 
@@ -57,8 +55,6 @@ export class RoomService {
         return existingRoom.save().catch((error) => {
           throw error;
         });
-      } else {
-        throw new BadRequestException(`room with hash: ${hash} was not found`);
       }
     } catch (error) {
       throw error;
@@ -73,8 +69,6 @@ export class RoomService {
         return await existingRoom.save().catch((error) => {
           throw error;
         });
-      } else {
-        throw new BadRequestException(`room with hash: ${hash} was not found`);
       }
     } catch (error) {
       throw error;
@@ -89,8 +83,6 @@ export class RoomService {
         return await existingRoom.save().catch((error) => {
           throw error;
         });
-      } else {
-        throw new BadRequestException(`room with hash: ${hash} was not found`);
       }
     } catch (error) {
       throw error;

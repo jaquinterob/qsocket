@@ -20,6 +20,7 @@ export namespace RoomServiceMocks {
   export const roomModel = {
     find: jest.fn().mockReturnValueOnce({
       sort: jest.fn().mockResolvedValueOnce([]),
+      catch: jest.fn().mockRejectedValueOnce({}),
     }),
     findOne: jest.fn(() => ({
       save: jest.fn().mockResolvedValueOnce(roomDto),

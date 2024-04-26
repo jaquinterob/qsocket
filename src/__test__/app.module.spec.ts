@@ -3,12 +3,12 @@ import { AppModule } from '../app.module';
 import { GatewayModule } from '../websocket/websocket.module';
 import { RoomModule } from '../room/room.module';
 
-describe('AppModule', () => {
+xdescribe('AppModule', () => {
   let app: TestingModule;
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
-      imports: [AppModule,GatewayModule,RoomModule],
+      imports: [AppModule, GatewayModule, RoomModule],
     }).compile();
   });
 

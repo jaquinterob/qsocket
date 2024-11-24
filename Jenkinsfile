@@ -42,12 +42,9 @@ pipeline {
     stage('Launch the app in the docker container') {
       steps {
         script {
-          withCredentials([string(credentialsId: 'MONGO_CONNECT', variable: 'MONGO_CONNECT')]) {
             sh "docker run -dp $PORT:3000 --name $APP_NAME $IMAGE_NAME"
-           }
         }
       }
     }
   }
-
 }

@@ -8,7 +8,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { RoomService } from '../room/room.service';
 import { Room } from '../websocket/interfaces/room';
 import { Vote } from 'src/websocket/interfaces/vote';
 
@@ -16,8 +15,6 @@ import { Vote } from 'src/websocket/interfaces/vote';
 export class WebsocketGetway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  constructor(private readonly roomService: RoomService) {}
-
   @WebSocketServer()
   server: Server;
   private rooms: Room[] = [];
@@ -68,11 +65,6 @@ export class WebsocketGetway
     } else {
       this.addNewVote(room, newVote);
     }
-    try {
-      this.roomService.addUserToRoom(newVote.user, room.name);
-    } catch (error) {
-      return;
-    }
   }
 
   @SubscribeMessage('logOut')
@@ -92,8 +84,6 @@ export class WebsocketGetway
     const room = this.getRoom(roomName);
     room.show = show;
     if (room.show) {
-      await this.roomService.setLastVotes(room.history, room.name);
-      await this.roomService.setShowBy(user, room.name);
       this.server.to(roomName).emit('showBy', user);
     }
     this.server.to(roomName).emit('show', room.show);

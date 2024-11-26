@@ -85,9 +85,6 @@ export class WebsocketGetway
     const room = this.getRoom(roomName);
     room.show = show;
     if (room.show) {
-      this.generateIaComment(room.history).then((comment) =>
-        this.server.to(roomName).emit('iaMessage', comment),
-      );
       this.server.to(roomName).emit('showBy', user);
     }
     this.server.to(roomName).emit('show', room.show);
@@ -148,11 +145,11 @@ export class WebsocketGetway
   constructor(private configService: ConfigService) {}
 
   async generateIaComment(votes: Vote[]): Promise<string> {
-    const message = `esto es el resultado de las votaciones en un poker de metodologia agil, esto sirve para estimar la complejiidad de una tarea, porfavor hazme un comentario divertido usando emojis, que el texto generado sea sin saltos de linea ni caracteres especiales, solo emojis pero pocos y texto plano: ${JSON.stringify(votes)}, quiero que no hables de cerveza y si te refieres a John o JohnQ porfavor no le pidas que tome café, al final sugiere un puntaje de complejidad para la tarea, las posibilidades son 0.5,1,2,3,5,8,13 haz la sugerencias de preguntas, si los votos con iguales no hagas preguntas y afirma la complejidad que todos los votantes seleccionaron. datos adicionales si eligen -2 significa el votante tienen incertidumbre, -1 el votante necesita un break, 0 significa que votante no ha votado y 100 significa que el votante piensa que es muy compleja la tarea`;
+    const message = `esto es el resultado de las votaciones en un poker de metodologia agil, esto sirve para estimar la complejiidad de una tarea, porfavor hazme un comentario divertido usando emojis, que el texto generado sea sin saltos de linea ni caracteres especiales, solo emojis pero pocos y texto plano: ${JSON.stringify(votes)}, quiero que no hables de cerveza y si te refieres a John o JohnQ porfavor no le pidas que tome café, al final sugiere un puntaje de complejidad para la tarea, las posibilidades son 0.5,1,2,3,5,8,13 haz la sugerencias de preguntas, si los votos con iguales no hagas preguntas y afirma la complejidad que todos los votantes seleccionaron. datos adicionales si eligen -2 significa el votante tienen incertidumbre, -1 el votante necesita un break, 0 significa que votante no ha votado y 100 significa que el votante piensa que es muy compleja la tarea. incluye emojis de navidad si es que estamos en diciembre`;
 
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
+    const GEMINI_API_KEY = this.configService.get<string>('GEMINI_API_KEY');
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {

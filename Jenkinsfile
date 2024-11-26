@@ -6,6 +6,7 @@ pipeline {
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
     GEMINI_API_KEY = credentials('gemini-api-key-credential-id')
+    MONGODB_URI = credentials('id_mongo_connect')
   }
   
   stages {
@@ -39,6 +40,7 @@ pipeline {
         sh """
           docker build \
             --build-arg GEMINI_API_KEY=${GEMINI_API_KEY} \
+            --build-arg MONGODB_URI=${MONGODB_URI} \
             -t ${IMAGE_NAME} .
         """
       }
@@ -50,6 +52,7 @@ pipeline {
           sh """
             docker run -dp ${PORT}:3000 \
               -e GEMINI_API_KEY=${GEMINI_API_KEY} \
+              -e MONGODB_URI=${MONGODB_URI} \
               --name ${APP_NAME} ${IMAGE_NAME}
           """
         }

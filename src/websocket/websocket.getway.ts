@@ -79,7 +79,6 @@ export class WebsocketGetway
 
   @SubscribeMessage('setShow')
   async showVotes(@MessageBody() payload: any): Promise<void> {
-    console.log('showVotes');
     const roomName = payload[0];
     const show = payload[1];
     const user = payload[2];
@@ -150,7 +149,6 @@ export class WebsocketGetway
 
   async generateIaComment(votes: Vote[]): Promise<string> {
     const message = `esto es el resultado de las votaciones en un poker de metodologia agil, esto sirve para estimar la complejiidad de una tarea, porfavor hazme un comentario divertido usando emojis, que el texto generado sea sin saltos de linea ni caracteres especiales, solo emojis pero pocos y texto plano: ${JSON.stringify(votes)}, quiero que no hables de cerveza y si te refieres a John o JohnQ porfavor no le pidas que tome café, al final sugiere un puntaje de complejidad para la tarea, las posibilidades son 0.5,1,2,3,5,8,13 haz la sugerencias de preguntas, si los votos con iguales no hagas preguntas y afirma la complejidad que todos los votantes seleccionaron. datos adicionales si eligen -2 significa el votante tienen incertidumbre, -1 el votante necesita un break, 0 significa que votante no ha votado y 100 significa que el votante piensa que es muy compleja la tarea`;
-    console.log(message);
 
     const apiKey = this.configService.get<string>('GEMINI_API_KEY');
     const response = await fetch(
@@ -179,9 +177,7 @@ export class WebsocketGetway
     }
 
     const responseData = await response.json();
-    console.log(
-      responseData.candidates[0].content.parts[0].text?.replace(/\n/g, ' '),
-    );
+
     return responseData.candidates[0].content.parts[0].text
       ?.replace(/\n/g, ' ')
       .replace(/\[object Object\]/g, '');

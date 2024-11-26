@@ -152,44 +152,47 @@ export class WebsocketGetway
   }
 
   async generateIaComment(votes: Vote[]): Promise<string> {
-    const configPromt = await this.configPromtModel.findOne({ active: true });
+    try {
+      const configPromt = await this.configPromtModel.findOne({ active: true });
+      let message = `${configPromt.prompt} ${JSON.stringify(votes)}`;
+      if (configPromt.host !== '') {
+        message += `. El encargado de la reunion tecnica es ${configPromt.host} dirigite como a él como si fueras su asistente.`;
+      }
 
-    let message = `${configPromt.prompt} ${JSON.stringify(votes)}`;
-
-    if (configPromt.host !== '') {
-      message += `. El encargado de la reunion tecnica es ${configPromt.host} dirigite como a él como si fueras su asistente.`;
-    }
-
-    const GEMINI_API_KEY = this.configService.get<string>('GEMINI_API_KEY');
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const GEMINI_API_KEY = this.configService.get<string>('GEMINI_API_KEY');
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: message,
+                  },
+                ],
+              },
+            ],
+          }),
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: message,
-                },
-              ],
-            },
-          ],
-        }),
-      },
-    );
+      );
 
-    if (!response.ok) {
-      throw new Error('Hubo un problema con la petición.');
+      if (!response.ok) {
+        throw new Error('Hubo un problema con la petición.');
+      }
+
+      const responseData = await response.json();
+
+      return responseData.candidates[0].content.parts[0].text
+        ?.replace(/\n/g, ' ')
+        .replace(/\[object Object\]/g, '');
+    } catch (error) {
+      console.error('Error al generar comentario IA:', error);
+      return 'Lo siento, hubo un error al procesar la solicitud.';
     }
-
-    const responseData = await response.json();
-
-    return responseData.candidates[0].content.parts[0].text
-      ?.replace(/\n/g, ' ')
-      .replace(/\[object Object\]/g, '');
   }
 }

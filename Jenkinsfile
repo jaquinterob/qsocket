@@ -5,6 +5,7 @@ pipeline {
     PORT = '5001' 
     IMAGE_NAME = 'qsocket_nest_image' 
     APP_NAME = 'QSOCKET_NEST_APP' 
+    GEMINI_API_KEY = credentials('gemini-api-key-credential-id')
   }
   
   stages {
@@ -35,14 +36,22 @@ pipeline {
     
     stage('Docker build') {
       steps {
-        sh "docker build -t $IMAGE_NAME ."
+        sh """
+          docker build \
+            --build-arg GEMINI_API_KEY=${GEMINI_API_KEY} \
+            -t ${IMAGE_NAME} .
+        """
       }
     }
 
     stage('Launch the app in the docker container') {
       steps {
         script {
-            sh "docker run -dp $PORT:3000 --name $APP_NAME $IMAGE_NAME"
+          sh """
+            docker run -dp ${PORT}:3000 \
+              -e GEMINI_API_KEY=${GEMINI_API_KEY} \
+              --name ${APP_NAME} ${IMAGE_NAME}
+          """
         }
       }
     }
